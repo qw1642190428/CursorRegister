@@ -233,8 +233,16 @@ def register_cursor(number, max_workers):
 
     options = ChromiumOptions()
     options.auto_port()
-    # Use turnstilePatch from https://github.com/TheFalloutOf76/CDP-bug-MouseEvent-.screenX-.screenY-patcher
     options.add_extension("turnstilePatch")
+
+    # Add the SOCKS5 proxy configuration
+    proxy_ip = os.getenv('PROXY_IP', '127.0.0.1')  # Replace with actual IP or use environment variable
+    proxy_port = os.getenv('PROXY_PORT', '1080')  # Replace with actual port or use environment variable
+    proxy_user = os.getenv('PROXY_USER', None)    # Optional: Proxy username
+    proxy_pass = os.getenv('PROXY_PASS', None)    # Optional: Proxy password
+
+    proxy_auth = f"{proxy_user}:{proxy_pass}@" if proxy_user and proxy_pass else ""
+    options.add_argument(f"--proxy-server=socks5://{proxy_auth}{proxy_ip}:{proxy_port}")
 
     if platform == "linux" or platform == "linux2":
         platformIdentifier = "X11; Linux x86_64"
